@@ -11,6 +11,10 @@ public abstract class AnimatedThing {
     private double y_hero;
     public ImageView spriteSheet_hero;
 
+    private double x_end;
+    private double y_end;
+    public ImageView spriteSheet_end;
+
 
 
     private int runIndex=0;
@@ -18,7 +22,6 @@ public abstract class AnimatedThing {
 
 
     private int jumpIndex=0;
-    private int jumpIndexMax=7;
     public static int jumpOk=0;
 
 
@@ -37,6 +40,10 @@ public abstract class AnimatedThing {
     int speed=6;//Vitesse de déplacement de l'ennemi
 
     public boolean ingame= true; // le jeu continue si ingame == true
+    public double y=250;//Position
+    public double a=-9.81 ; //acceleration
+    public double v=25; //vitesse
+
 
     //constructeur
     public AnimatedThing(double x, double y) {
@@ -56,24 +63,33 @@ public abstract class AnimatedThing {
         setXFoe(x);
         setYFoe(y);
 
+        Image thisSpringSheet_end = new Image("/Images/end.png"); // Attribue à Image l'image animée (notre Hero)
+        this.spriteSheet_end=new ImageView(thisSpringSheet_end); // création de l'image à voir
+        this.spriteSheet_end.setX(x);
+        this.spriteSheet_end.setY(y);
+        spriteSheet_end.setViewport( new Rectangle2D(-1,-1,1,1)); // Rectangle2D crée un cadre 2D sur spritesheet, partant de (v,v1) et longueur v3 et de hauteur v4
+        setXEnd(x);
+        setYEnd(y);
+
+
 
     }
     //Méthode
-    public void update(long time){ // permet d'actualiser l'image animée
+    public void update(long time,double deltatime){ // permet d'actualiser l'image animée
+
         int newindex;
         int newindex2;
         if(jumpOk==0) { // Etat où on ne saute pas => Il court
             newindex = getRunIndex(); //Index permet de pointer les 6 positions différentes de notre Hero
+
             if (newindex == runIndexMax) {
                 setRunIndex(0);
             } else {
                 setRunIndex(newindex + 1);
             }
-            x_hero = getXHero();
-            System.out.println(getRunIndex());
-            spriteSheet_hero.setViewport(new Rectangle2D(getRunIndex() * 128, 0, 120, 333)); // On affiche la nouvelle position du Hero à chaque appel de update
+            spriteSheet_hero.setX(30);
+            spriteSheet_hero.setViewport(new Rectangle2D(getRunIndex() * 126+5, 0, 120, 120)); // On affiche la nouvelle position du Hero à chaque appel de update
 
-            //System.out.println(getRunIndex());
             if(redHawk==1){
                 newindex2 = getRedHawkIndex();
                 if (newindex2==redHawkIndexMax+1){
@@ -81,58 +97,73 @@ public abstract class AnimatedThing {
                     redHawk=0;
                 }
                 else{
-                    x_hero=getXHero();
-                    spriteSheet_hero.setViewport(new Rectangle2D(getRedHawkIndex() * 305+150, 666, 305, 333)); // On affiche la nouvelle position du Hero à chaque appel de update
+                    spriteSheet_hero.setViewport(new Rectangle2D(getRedHawkIndex() * 120+150, 666, 305, 120)); // On affiche la nouvelle position du Hero à chaque appel de update
                     setRedHawkIndex(newindex2 + 1);
                 }
 
             }
         }
         else { //Etat où on saute
-            newindex = getJumpIndex();
-            if (newindex == jumpIndexMax+1) {
+            if (jumpIndex ==1 & y>200) {
                 setJumpIndex(0);
                 jumpOk = 0;
+                jumpIndex=0;
+                v=25;
+                y=250;
+                spriteSheet_hero.setY(y);
+
             }
             else {
-                x_hero = getXHero();
-                //System.out.println(i);
-                spriteSheet_hero.setViewport(new Rectangle2D(getJumpIndex() * 128, 333, 120, 333)); // On affiche la nouvelle position du Hero à chaque appel de update
-                setJumpIndex(newindex + 1);
+                if (jumpIndex == 0) {
+                    if (v<0) {
+                        jumpIndex = 1;
+                        spriteSheet_hero.setX(30);
+                    }
+                }
+                v+=a*deltatime;
+                y+=v*a*deltatime;
+                spriteSheet_hero.setX(94);
+                spriteSheet_hero.setY(y);
+                spriteSheet_hero.setViewport(new Rectangle2D(jumpIndex * 128+64, 120, 64, 120)); // On affiche la nouvelle position du Hero à chaque appel de update
+
             }
             redHawk=0;//Ne lance pas l'attaque si la touche ENTER a été appuyé pendant le saut
+
         }
 
     }
 
     public void foeSummoning(long time){
-
         if(ennemi) {
             double position = getXFoe();
-            if (position>-10){
+            if (position>10){
                 this.spriteSheet_foe.setX(position-speed); //On modifie le x associé à l'image dans le background de gauche
                 setXFoe( (position- speed));
-                spriteSheet_foe.setViewport(new Rectangle2D( 120*ennemi_index, 20, 110, 170)); // On affiche la nouvelle position du Hero à chaque appel de update
+                spriteSheet_foe.setViewport(new Rectangle2D( 120*ennemi_index+1, 0, 110, 170)); // On affiche la nouvelle position du Hero à chaque appel de update
             }
             else{ennemi=false;
-            foe_count=0;}
+            foe_count=0;
+            }
         }
         else{
             if (foe_count<foe_countMax) {
                 foe_count = foe_count+1;
                 spriteSheet_foe.setViewport(new Rectangle2D( 0, 300, 110, 170)); // On affiche la nouvelle position du Hero à chaque appel de update
-
+                setXFoe(600);
+                this.spriteSheet_foe.setX(600);
             }
             else{
                 ennemi= true;
                 ennemi_index = rand.nextInt(9);
-                setXFoe(600);
-
             }
+
         }
-        if((getXFoe()==20)&&(jumpIndex<2)&&(jumpIndex>5)){
-            ingame= false;
-        }
+    }
+    public void end(){
+        this.spriteSheet_end.setX(100); //On modifie le x associé à l'image dans le background de gauche
+        setXEnd(100);
+        spriteSheet_end.setViewport( new Rectangle2D(0,0,0,0)); // Rectangle2D crée un cadre 2D sur spritesheet, partant de (v,v1) et longueur v3 et de hauteur v4
+
     }
 
 
@@ -141,6 +172,9 @@ public abstract class AnimatedThing {
     public void setYHero(double y) {this.y_hero = y;}
     public void setXFoe(double x) {this.x_foe = x;}
     public void setYFoe(double y) {this.y_foe = y;}
+    public void setXEnd(double x) {this.x_end = x;}
+    public void setYEnd(double y) {this.y_end = y;}
+
     public void setRunIndex(int runIndex) {this.runIndex = runIndex;}
     public void setJumpIndex(int jumpIndex) {this.jumpIndex = jumpIndex;}
     public void setRedHawkIndex(int redHawkIndex) {this.redHawkIndex = redHawkIndex;}
@@ -148,12 +182,13 @@ public abstract class AnimatedThing {
 
     //Getter
     public double getXHero() {return x_hero;}
+
     public double getYHero() {return y_hero;}
     public double getXFoe() {return x_foe;}
-    public double getYFoe() {return y_foe;}
     public int getRunIndex() {return runIndex;}
     public int getJumpIndex() {return jumpIndex;}
     public int getRedHawkIndex() {return redHawkIndex;}
+    public ImageView getEnd(){return this.spriteSheet_end;}
 
 
     public abstract ImageView getSpriteSheet();

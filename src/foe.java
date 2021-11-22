@@ -4,7 +4,7 @@ import javafx.scene.image.ImageView;
 public class foe extends AnimatedThing {
 
     public foe() {
-        super(-10, 225);
+        super(600, 225);
         this.getSpriteSheet().setViewport(new Rectangle2D(0,0,170,500));
 }
 
