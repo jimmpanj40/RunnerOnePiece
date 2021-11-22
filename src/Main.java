@@ -17,8 +17,12 @@ public class Main extends Application {
 
         pane.getChildren().add(theScene.getRightBack().getImageView()); // affichage du background gauche
         pane.getChildren().add(theScene.getLeftBack().getImageView()); // " " droite
+
         pane.getChildren().add(theScene.getFoe().getSpriteSheet());// " " Foe
+
         pane.getChildren().add(theScene.getHero().getSpriteSheet());// " " Hero
+        pane.getChildren().add(theScene.getHero().getEnd());// " " End
+        pane.getChildren().add(theScene.getHero().getLifePoint()); // " " Life
 
 
 
@@ -31,11 +35,11 @@ public class Main extends Application {
                 if (ke.getCode() == KeyCode.SPACE) { // Si appuie de la touche SPACE
                     Hero.jumpOk=1; //Permet de sauter
                 }
-                if (ke.getCode() == KeyCode.ENTER) { // Si appuie de la touche SPACE
+                if (ke.getCode() == KeyCode.ENTER) { // Si appuie de la touche ENTER
                     Hero.redHawk=1; //Permet de sauter
                 }
-                if (ke.getCode() == KeyCode.L) { // Si appuie de la touche SPACE
-                    GameScene.stop=1; //Permet de sauter
+                if (ke.getCode() == KeyCode.L) { //
+                    GameScene.stop=1;
                     System.out.println("STOP");
                 }
             }

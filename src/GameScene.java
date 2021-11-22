@@ -12,7 +12,7 @@ public class GameScene extends Scene {
     private Hero hero; // creation d'un héro
     private foe foe;// création d'un ennemi
     private int slow=0;
-
+    public static int life =5;
     public boolean ingame= true; // le jeu continue si ingame == true
 
     public GameScene(Parent parent, double width, double height, boolean depthBuffer) {
@@ -21,21 +21,33 @@ public class GameScene extends Scene {
         this.rightBack= new staticThing(800,0,"desert"); // " " de droite
         this.hero = new Hero();  // création d'un Hero
         this.foe= new foe();
+
         //Camera cam1 = new Camera(); // Création d'une caméra
 
         AnimationTimer timer= new AnimationTimer(){ //création d'un Timer qui actualise les affichages
             public void handle(long time){
-                slow+=1; // Slow permet de ralentir la course du joueur
-                if (slow%8 ==0) { //On divise la vitesse de défilement par 3, à tester sans slow, càd "slow%1==0"
+                hero.LifePoint();
+                slow += 1; // Slow permet de ralentir la course du joueur
+                if (slow % 4 == 0) { //On divise la vitesse de défilement par 3, à tester sans slow, càd "slow%1==0"
                     hero.update(time); // actualise la position du Hero
                     //cam1.update(time); // actualise la position de la caméra, mais ça semble useless à notre niveau
                     GameScene.update(time); // actualise le Background
-                    slow=0;
+                    slow = 0;
                 }
                 foe.foeSummoning(time);
-                if(stop==1){
+
+
+                if (life>0) {
+                    if(stop==1){
+                        life=life-1;
+                        stop=0;
+                    }
+                }
+                else{
+                    hero.end();
                     this.stop();
                 }
+
             }
         };
         timer.start();
@@ -45,7 +57,7 @@ public class GameScene extends Scene {
 
 
     public static void update(long time){ // actualise le background
-        int speed=30;
+        int speed=20;
         double x1= leftBack.getX();
         double x2= rightBack.getX();
         if(x1<30){ //prendre x<30 au lieu de 0 permet d'éviter un freeze de l'écran du au changement de background
@@ -72,6 +84,7 @@ public class GameScene extends Scene {
     public foe getFoe(){return this.foe;}
     public staticThing getLeftBack(){return this.leftBack;}
     public staticThing getRightBack(){return this.rightBack;}
+    public static int getLife(){return life;}
 
     // Setters
 
