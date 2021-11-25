@@ -9,7 +9,7 @@ import javafx.scene.image.ImageView;
 
 public class GameScene extends Scene {
     public static int stop = 0;
-    private Camera cam1;
+    //private Camera cam1;
     private static staticThing leftBack;
     private static staticThing rightBack;
     private Hero hero; // creation d'un héro
@@ -48,7 +48,7 @@ public class GameScene extends Scene {
                 if (slow % 5 == 0) { //On divise la vitesse de défilement par 3, à tester sans slow, càd "slow%1==0"
                     hero.update(time,deltaTime); // actualise la position du Hero
                     //cam1.update(time); // actualise la position de la caméra, mais ça semble useless à notre niveau
-                    GameScene.update(time); // actualise le Background
+                    GameScene.update(); // actualise le Background
                     slow = 0;
                 }
                 foe.foeSummoning(time);
@@ -85,7 +85,7 @@ public class GameScene extends Scene {
 
         }
     }
-    public static void update(long time) { // actualise le background
+    public static void update() { // actualise le background
         int speed = 20;
         double x1 = leftBack.getX();
         double x2 = rightBack.getX();

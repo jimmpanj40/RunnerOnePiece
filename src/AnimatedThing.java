@@ -162,6 +162,8 @@ public abstract class AnimatedThing {
     public void end(){
         this.spriteSheet_end.setX(100); //On modifie le x associé à l'image dans le background de gauche
         setXEnd(100);
+        this.spriteSheet_end.setY(0); //On modifie le x associé à l'image dans le background de gauche
+        setXEnd(0);
         spriteSheet_end.setViewport( new Rectangle2D(0,0,0,0)); // Rectangle2D crée un cadre 2D sur spritesheet, partant de (v,v1) et longueur v3 et de hauteur v4
 
     }
