@@ -5,39 +5,36 @@ import javafx.scene.image.ImageView;
 import java.util.Random;
 
 public abstract class AnimatedThing {
-    Random rand = new Random();
+    Random rand = new Random(); //permet de créér des fonctions randoms
 
     private double x_hero;
     private double y_hero;
-    public ImageView spriteSheet_hero;
+    public ImageView spriteSheet_hero; //spritesheet du Hero
 
     private double x_end;
     private double y_end;
-    public ImageView spriteSheet_end;
-
-
+    public ImageView spriteSheet_end; //spritesheet du game over
 
     private int runIndex=0;
-    private int runIndexMax = 7;
+    private int runIndexMax = 7; //7 positions pour le Hero
 
 
     private int jumpIndex=0;
-    public static int jumpOk=0;
+    public static int jumpOk=0; //Etat où le joueur est en train de sauter
 
 
     private double x_foe;
     private double y_foe;
-    public ImageView spriteSheet_foe;
+    public ImageView spriteSheet_foe; //Spritesheet des ennemis
     int foe_count=0; //compteur d'apparition d'un ennemi
     int foe_countMax=100; // Fréquence d'apparation d'un ennemi
     boolean ennemi= false; //Présence d'un ennemi
     int ennemi_index=0; //pointe le rang de l'ennemi
     int speed=6;//Vitesse de déplacement de l'ennemi
 
-    public boolean ingame= true; // le jeu continue si ingame == true
-    public double y=250;//Position
-    public double a=-9.81 ; //acceleration
-    public double v=25; //vitesse
+    public double y=250;//Position verticale du Hero
+    public double a=-9.81 ; //acceleration verticale du Hero
+    public double v=25; //vitesse verticale du Hero
 
 
     //constructeur
@@ -50,19 +47,19 @@ public abstract class AnimatedThing {
         setXHero(x);
         setYHero(y);
 
-        Image thisSpringSheet_foe = new Image("/Images/foes.png");
+        Image thisSpringSheet_foe = new Image("/Images/foes.png");//Attribue à Image l'image animée (nos ennemis)
         this.spriteSheet_foe=new ImageView(thisSpringSheet_foe); // création de l'image à voir
         this.spriteSheet_foe.setX(x);
         this.spriteSheet_foe.setY(y);
-        spriteSheet_foe.setViewport( new Rectangle2D(0,0,85,100)); // Rectangle2D crée un cadre 2D sur spritesheet, partant de (v,v1) et longueur v3 et de hauteur v4
+        spriteSheet_foe.setViewport( new Rectangle2D(0,0,85,100));
         setXFoe(x);
         setYFoe(y);
 
-        Image thisSpringSheet_end = new Image("/Images/end.png"); // Attribue à Image l'image animée (notre Hero)
+        Image thisSpringSheet_end = new Image("/Images/end.png"); // Attribue à Image l'image de fin "Game Over"
         this.spriteSheet_end=new ImageView(thisSpringSheet_end); // création de l'image à voir
         this.spriteSheet_end.setX(x);
         this.spriteSheet_end.setY(y);
-        spriteSheet_end.setViewport( new Rectangle2D(-1,-1,1,1)); // Rectangle2D crée un cadre 2D sur spritesheet, partant de (v,v1) et longueur v3 et de hauteur v4
+        spriteSheet_end.setViewport( new Rectangle2D(-1,-1,1,1));
         setXEnd(x);
         setYEnd(y);
 
@@ -71,24 +68,18 @@ public abstract class AnimatedThing {
     }
     //Méthode
     public void update(long time,double deltatime){ // permet d'actualiser l'image animée
-
         int newindex;
-        int newindex2;
         if(jumpOk==0) { // Etat où on ne saute pas => Il court
             newindex = getRunIndex(); //Index permet de pointer les 6 positions différentes de notre Hero
 
-            if (newindex == runIndexMax) {
-                setRunIndex(0);
-            } else {
-                setRunIndex(newindex + 1);
-            }
+            if (newindex == runIndexMax) {setRunIndex(0);}
+            else {setRunIndex(newindex + 1);}
+
             spriteSheet_hero.setX(30);
             spriteSheet_hero.setViewport(new Rectangle2D(getRunIndex() * 126+5, 0, 120, 120)); // On affiche la nouvelle position du Hero à chaque appel de update
-
-
         }
         else { //Etat où on saute
-            if (jumpIndex ==1 & y>200) {
+            if (jumpIndex ==1 & y>200) { //Passer de jump -> Run
                 setJumpIndex(0);
                 jumpOk = 0;
                 jumpIndex=0;
@@ -98,46 +89,43 @@ public abstract class AnimatedThing {
 
             }
             else {
-                if (jumpIndex == 0) {
-                    if (v<0) {
+                if (jumpIndex == 0) { //Tant qu'on court
+                    if (v<0) { //lorsque l'on retombe
                         jumpIndex = 1;
                         spriteSheet_hero.setX(30);
                     }
                 }
-                v+=a*deltatime;
+                v+=a*deltatime; //définition de la vitesse et de l'accelération
                 y+=v*a*deltatime;
                 spriteSheet_hero.setX(94);
                 spriteSheet_hero.setY(y);
                 spriteSheet_hero.setViewport(new Rectangle2D(jumpIndex * 128+64, 120, 64, 120)); // On affiche la nouvelle position du Hero à chaque appel de update
-
             }
-
         }
-
     }
 
     public void foeSummoning(long time){
-        if(ennemi) {
-            double position = getXFoe();
-            if (position>10){
+        if(ennemi) { //Si l'ennemi a déjà été invoqué
+            double position = getXFoe(); //On récupère la position de l'ennemi
+            if (position>10){ //Si l'ennemi est sur la chemin, on le rapproche du Hero
                 this.spriteSheet_foe.setX(position-speed); //On modifie le x associé à l'image dans le background de gauche
                 setXFoe( (position- speed));
                 spriteSheet_foe.setViewport(new Rectangle2D( 120*ennemi_index+1, 0, 110, 170)); // On affiche la nouvelle position du Hero à chaque appel de update
             }
-            else{ennemi=false;
+            else{ennemi=false; //Si l'ennemi arrive derrière nous, il disparaît, il n'y a plus d'ennemi
             foe_count=0;
             }
         }
         else{
             if (foe_count<foe_countMax) {
-                foe_count = foe_count+1;
-                spriteSheet_foe.setViewport(new Rectangle2D( 0, 300, 110, 170)); // On affiche la nouvelle position du Hero à chaque appel de update
+                foe_count = foe_count+1; //Permet de laisser un delai après la disparition d'un ennemi
+                spriteSheet_foe.setViewport(new Rectangle2D( 0, 300, 110, 170)); //
                 setXFoe(600);
                 this.spriteSheet_foe.setX(600);
             }
             else{
-                ennemi= true;
-                ennemi_index = rand.nextInt(9);
+                ennemi= true; //Invocation d'un ennemi
+                ennemi_index = rand.nextInt(9);//Choisit un ennemi au hasard
             }
 
         }

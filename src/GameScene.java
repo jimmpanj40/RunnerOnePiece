@@ -41,22 +41,20 @@ public class GameScene extends Scene {
         AnimationTimer timer = new AnimationTimer() {//création d'un Timer qui actualise les affichages
 
             public void handle(long time) {
-                invicibility=Math.max( invicibility-1000, 0);
-                System.out.println(invicibility);
-                deltaTime=(time-previousTime)/50000000;
+                invicibility=Math.max( invicibility-1000, 0);//l'nvicibilité s'estompe
+                deltaTime=(time-previousTime)/50000000; //Intervalle de temps entre chaque appel de time
                 slow += 1; // Slow permet de ralentir la course du joueur
-                if (slow % 5 == 0) { //On divise la vitesse de défilement par 3, à tester sans slow, càd "slow%1==0"
+                if (slow % 5 == 0) { //On divise la vitesse de défilement par 5
                     hero.update(time,deltaTime); // actualise la position du Hero
-                    //cam1.update(time); // actualise la position de la caméra, mais ça semble useless à notre niveau
                     GameScene.update(); // actualise le Background
                     slow = 0;
                 }
-                foe.foeSummoning(time);
+                foe.foeSummoning(time);//invoque et actualise la position des ennemis
 
-                lifePoint();
+                lifePoint();//actualise les vies ainsi que l'affichage de la barre de vie
                 if(numberOfLives==0){
-                    hero.end();
-                    this.stop();
+                    hero.end(); //affichie le message "game over" quand le joueur n'a plus de vie
+                    this.stop();//arrête le temps
                 }
                 previousTime=time;
 

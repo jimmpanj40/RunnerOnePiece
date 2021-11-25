@@ -35,10 +35,6 @@ public class Main extends Application {
                 if (ke.getCode() == KeyCode.SPACE) { // Si appuie de la touche SPACE
                     Hero.jumpOk=1; //Permet de sauter
                 }
-                if (ke.getCode() == KeyCode.L) { //
-                    GameScene.stop=1;
-                    System.out.println("STOP");
-                }
             }
         });
 
