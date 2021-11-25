@@ -25,11 +25,6 @@ public abstract class AnimatedThing {
     public static int jumpOk=0;
 
 
-
-    private int redHawkIndex=0;
-    private int redHawkIndexMax=2;
-    public static int redHawk=0;
-
     private double x_foe;
     private double y_foe;
     public ImageView spriteSheet_foe;
@@ -90,18 +85,7 @@ public abstract class AnimatedThing {
             spriteSheet_hero.setX(30);
             spriteSheet_hero.setViewport(new Rectangle2D(getRunIndex() * 126+5, 0, 120, 120)); // On affiche la nouvelle position du Hero à chaque appel de update
 
-            if(redHawk==1){
-                newindex2 = getRedHawkIndex();
-                if (newindex2==redHawkIndexMax+1){
-                    setRedHawkIndex(0);
-                    redHawk=0;
-                }
-                else{
-                    spriteSheet_hero.setViewport(new Rectangle2D(getRedHawkIndex() * 120+150, 666, 305, 120)); // On affiche la nouvelle position du Hero à chaque appel de update
-                    setRedHawkIndex(newindex2 + 1);
-                }
 
-            }
         }
         else { //Etat où on saute
             if (jumpIndex ==1 & y>200) {
@@ -127,7 +111,6 @@ public abstract class AnimatedThing {
                 spriteSheet_hero.setViewport(new Rectangle2D(jumpIndex * 128+64, 120, 64, 120)); // On affiche la nouvelle position du Hero à chaque appel de update
 
             }
-            redHawk=0;//Ne lance pas l'attaque si la touche ENTER a été appuyé pendant le saut
 
         }
 
@@ -163,7 +146,7 @@ public abstract class AnimatedThing {
         this.spriteSheet_end.setX(100); //On modifie le x associé à l'image dans le background de gauche
         setXEnd(100);
         this.spriteSheet_end.setY(0); //On modifie le x associé à l'image dans le background de gauche
-        setXEnd(0);
+        setYEnd(0);
         spriteSheet_end.setViewport( new Rectangle2D(0,0,0,0)); // Rectangle2D crée un cadre 2D sur spritesheet, partant de (v,v1) et longueur v3 et de hauteur v4
 
     }
@@ -179,7 +162,6 @@ public abstract class AnimatedThing {
 
     public void setRunIndex(int runIndex) {this.runIndex = runIndex;}
     public void setJumpIndex(int jumpIndex) {this.jumpIndex = jumpIndex;}
-    public void setRedHawkIndex(int redHawkIndex) {this.redHawkIndex = redHawkIndex;}
 
 
     //Getter
@@ -189,7 +171,6 @@ public abstract class AnimatedThing {
     public double getXFoe() {return x_foe;}
     public int getRunIndex() {return runIndex;}
     public int getJumpIndex() {return jumpIndex;}
-    public int getRedHawkIndex() {return redHawkIndex;}
     public ImageView getEnd(){return this.spriteSheet_end;}
 
 
